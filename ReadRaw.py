@@ -8,7 +8,7 @@ import sys
 
 sentence=[]
 
-with open("3_luglio_GAL_E1/RawMeasurementsLogger_RawLog_2019_07_03_06_39_49.txt", "r") as data_file:
+with open("4_luglio_GAL_E5a/RawMeasurementsLogger_RawLog_2019_07_04_06_38_22.txt", "r") as data_file:
     data_file_lines = data_file.readlines()
 
 #skip header
@@ -32,17 +32,46 @@ for i in range(len(data)):
         else:
             continue
 print(Svid)
+#### Constellation Type ####
+# GPS = 1
+# GLONASS = 3
+# QZSS = 4
+# BEIDOU = 5
+# GALILEO = 6
+# SBAS = 2
+# UNKNOWN = 9
 
 ConstellationType=[]
 for i in range(len(data)):
     if data[i][0] == "Fix":
         continue
     else:
-        if data[i][25] not in Svid:
-            Svid.append(data[i][25])
+        if data[i][25] not in ConstellationType:
+            ConstellationType.append(data[i][25])
         else:
             continue
+
+#
+ReceivedConst=[]
+for i in ConstellationType:
+    if i == '1':
+        ReceivedConst.append('GPS')
+    elif i == '2':
+        ReceivedConst.append('SBAS')
+    elif i == '3':
+        ReceivedConst.append('GLONASS')
+    elif i == '4':
+        ReceivedConst.append('QZSS')
+    elif i == '5':
+        ReceivedConst.append('BEIDOU')
+    elif i == '6':
+        ReceivedConst.append('GALILEO')
+    else:
+        ReceivedConst.append('UNKNOWN')
+
+
 print(ConstellationType)
+print(ReceivedConst)
 
 sys.exit()
 '''
