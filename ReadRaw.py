@@ -18,6 +18,7 @@ def ReadSatID (raw_file):
     with open(raw_file, "r") as data_file:
         data_file_lines = data_file.readlines()
 
+        
     #skip header
     no_header_file = data_file_lines[9:]
 
@@ -94,15 +95,79 @@ def ReadSatID (raw_file):
 
     return(GALILEO, SBAS, GLONASS, QZSS, BEIDOU, GALILEO, UNKNOWN)
 
+def GetSatID(Svid, Constellation):
+    '''
+    This function returns the sat id starting from the Svid and the Constellation
 
+    '''
+    #### Constellation Type ####
+    # GPS = 1
+    # GLONASS = 3
+    # QZSS = 4
+    # BEIDOU = 5
+    # GALILEO = 6
+    # SBAS = 2
+    # UNKNOWN = 9
 
+    pass
 
 
 def main ():
 
-    RawDataFile = "../1_luglio_GAL_GPS/RawMeasurementsLogger_RawLog_2019_07_01_06_28_43.txt"
+    RawDataFile = "/home/lorenzo/remote/progetti_convegni/ricerca/2018_2022_PhD_Lorenzo/ANDROID/test_vilanova_ESA_summerschool/24_luglio/gadip3_mi9/RawMeasurementsLogger_RawLog_2019_07_24_12_46_02.txt"
+    RawDataFileNew = "/home/lorenzo/remote/progetti_convegni/ricerca/2018_2022_PhD_Lorenzo/ANDROID/test_vilanova_ESA_summerschool/24_luglio/gadip3_mi9/RawMeasurementsLogger_RawLog_2019_07_24_12_46_02_Elaborato.txt"
+    #ReadSatID(RawDataFile)
 
-    ReadSatID(RawDataFile)
+
+
+
+    with open(RawDataFile, "r") as data_file:
+        data_file_lines = data_file.readlines()
+   # print(type(data_file_lines))
+    #print(data_file_lines[18])
+    
+    no_header_file = data_file_lines[9:]
+    header = data_file_lines[:9]
+    
+    text_header = []
+    for i in range(len(header)):
+        l=header[i].strip()
+        line = l.split(',')
+        text_header.append(line)   
+    print (text_header[5])
+    
+    text_body = []
+    
+    
+    for j in range(len(no_header_file)):
+        l=no_header_file[j].strip()
+        line = l.split(',')
+        text_body.append(line)
+   
+    print(text_body[7])
+
+    ConstellationType = text_body[7][25]
+    print(ConstellationType)
+    Svid = text_body[7][11]
+    print(Svid)
+    sys.exit()
+    #preparing the text for the new file
+    
+    text_header[5].append("SatID")
+    text_header5=",".join(str(x) for x in text_header[5])
+    print(text_header5)
+        
+
+
+
+    #writing the new file
+    with open(RawDataFileNew, "w") as out_file:
+        for line in text_header:
+            strin_line=",".join(str(x) for x in line)
+            out_file.write(strin_line+'\n')
+    
+
+
 
 
 
