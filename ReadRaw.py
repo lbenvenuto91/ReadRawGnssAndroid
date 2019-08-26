@@ -136,24 +136,51 @@ def main ():
         text_header.append(line)   
     print (text_header[5])
     
+
+
     text_body = []
-    
-    
+       
     for j in range(len(no_header_file)):
         l=no_header_file[j].strip()
         line = l.split(',')
         text_body.append(line)
-   
-    print(text_body[7])
+    
+    for line in text_body:
+        if line[0]=='Raw':
+            ConstellationType = line[25]
+            Svid = line [11]
+            if ConstellationType == '1':
+                line.append('%s%s' %('G',Svid))
+            elif ConstellationType == '2':
+                line.append('%s%s' %('SBAS',Svid))
+            elif ConstellationType == '3':
+                line.append('%s%s' %('R',Svid))
+            elif ConstellationType == '4':
+                line.append('%s%s' %('Q',Svid))
+            elif ConstellationType == '5':
+                line.append('%s%s' %('C',Svid))
+            elif ConstellationType == '6':
+                line.append('%s%s' %('E',Svid))
+            else:
+                line.append('error/unknown')
+        else:
+            continue
+    
+    print(str(text_body[3]))
 
+
+    
     ConstellationType = text_body[7][25]
     print(ConstellationType)
     Svid = text_body[7][11]
     print(Svid)
-    sys.exit()
+
+
+   
     #preparing the text for the new file
     
     text_header[5].append("SatID")
+
     text_header5=",".join(str(x) for x in text_header[5])
     print(text_header5)
         
@@ -163,6 +190,11 @@ def main ():
     #writing the new file
     with open(RawDataFileNew, "w") as out_file:
         for line in text_header:
+            strin_line=",".join(str(x) for x in line)
+            out_file.write(strin_line+'\n')
+    
+    with open(RawDataFileNew, "w") as out_file:
+        for line in text_body:
             strin_line=",".join(str(x) for x in line)
             out_file.write(strin_line+'\n')
     
