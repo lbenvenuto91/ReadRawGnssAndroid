@@ -7,7 +7,11 @@ import csv
 import matplotlib.pyplot as plt
 #from numpy import *
 import sys
+import math
 
+#constants
+
+c = 299792458 #[m/s] speed of light in vacuum
 
 def ReadSatID (raw_file):
     '''
@@ -114,8 +118,8 @@ def GetSatID(Svid, Constellation):
 
 def main ():
 
-    RawDataFile = "/home/lorenzo/remote/progetti_convegni/ricerca/2018_2022_PhD_Lorenzo/ANDROID/test_vilanova_ESA_summerschool/24_luglio/gadip3_mi9/RawMeasurementsLogger_RawLog_2019_07_24_12_46_02.txt"
-    RawDataFileNew = "/home/lorenzo/remote/progetti_convegni/ricerca/2018_2022_PhD_Lorenzo/ANDROID/test_vilanova_ESA_summerschool/24_luglio/gadip3_mi9/RawMeasurementsLogger_RawLog_2019_07_24_12_46_02_Elaborato.txt"
+    RawDataFile = "/home/lorenzo/Documenti/test_vilanova_ESA_summerschool/24_luglio/gadip3_mi9/RawMeasurementsLogger_RawLog_2019_07_24_12_46_02.txt"
+    RawDataFileNew = "/home/lorenzo/Documenti/test_vilanova_ESA_summerschool/24_luglio/gadip3_mi9/RawMeasurementsLogger_RawLog_2019_07_24_12_46_02_Elaborato.txt"
     #ReadSatID(RawDataFile)
 
 
@@ -144,7 +148,38 @@ def main ():
         l=no_header_file[j].strip()
         line = l.split(',')
         text_body.append(line)
+
     
+    for line in text_body:
+        if line[0]=='Raw':
+            ConstellationType = line[25]
+            Svid = line [11]
+            T_rx = int(line [14]) #ReceivedSvTimeNanos
+            T_n = int(line[2]) #TimeNanos
+            T_on = float(line [12]) #TimeOffsetNanos
+            FBN = int(line [5]) #FullBiasNanos
+            BN = float(line [6]) #BiasNanos
+            print(FBN)
+
+            if ConstellationType == '1' and Svid == '11':
+                
+                weekNumberNs = 604800*10**9*math.floor(FBN*(-1)/604800*10**9)
+                print(weekNumberNs)
+                T_tx = (T_n + T_on) - (FBN + BN) - weekNumberNs
+                #pseudorange computation
+
+                pseudorange = c * (T_rx - T_tx)/(10**9)
+                print(pseudorange)
+                
+                print(line)
+                sys.exit()
+
+            else:
+                continue
+        else:
+            continue
+    
+    sys.exit()    
     for line in text_body:
         if line[0]=='Raw':
             ConstellationType = line[25]
@@ -166,10 +201,9 @@ def main ():
         else:
             continue
     
-    print(str(text_body[3]))
+    print(str(text_body[0]))
 
-
-    
+   
     ConstellationType = text_body[7][25]
     print(ConstellationType)
     Svid = text_body[7][11]
@@ -184,16 +218,31 @@ def main ():
     text_header5=",".join(str(x) for x in text_header[5])
     print(text_header5)
         
+    #observation of sat G11
 
+    obsG11 = []
 
+    for i in text_body:
+        print (i)
+    sys.exit()   
+    '''
+        if i[0] == 'Fix':
+            continue
+        else:
+            if i[25] == '1' and i[11] =='11':
+                i.append(obsG11)
+            else:
+                continue
+    print (obsG11)
 
+'''
     #writing the new file
     with open(RawDataFileNew, "w") as out_file:
         for line in text_header:
             strin_line=",".join(str(x) for x in line)
             out_file.write(strin_line+'\n')
     
-    with open(RawDataFileNew, "w") as out_file:
+    #with open(RawDataFileNew, "w") as out_file:
         for line in text_body:
             strin_line=",".join(str(x) for x in line)
             out_file.write(strin_line+'\n')
